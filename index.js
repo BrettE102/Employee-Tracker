@@ -8,7 +8,7 @@ const fs = require('fs')
 const Engineer = require('./lib/Engineer')
 const Manager = require('./lib/Manager')
 const Intern = require('./lib/Intern')
-const render = require('./src/PlaceHolder.js')
+const htmlTemplate = require('./src/generateHtml.js')
 // const { default: Choices } = require('inquirer/lib/objects/choices')
 
 var team = []
@@ -44,38 +44,7 @@ function initQuestions(){
 
    managerQuestions()
 
-   function generateTeam() {
-    inquirer.prompt([
-        {
-            type: 'list',
-            name: 'team',
-            message: 'What type of team member do you want to add',
-            choices: ['intern', 'manager', 'engineer', 'no one']
-        }
-    ]).then((newTeam) => {
-        switch (newTeam.team){
-            case 'engineer':
-              engineerQuestions(); 
-              break
-              case 'manager':
-                managerQuestions(); 
-                break 
-                case 'intern':
-                    internQuestions(); 
-                    break 
-                    default : createTeam()  
-        } 
-    })
-   }
-
-   function createTeam () {
-    console.log('hello3')
-    render(team)
-    // fs.writeFileSync(
-    //     './src/generated.html',
-    //     render(newTeam), 'utf-8',
-    // );
-}
+   
 
    function engineerQuestions(){
     inquirer.prompt([
@@ -127,9 +96,35 @@ function initQuestions(){
         generateTeam()
     })
     
+    
 
 
 }
+function generateTeam() {
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'team',
+            message: 'What type of team member do you want to add',
+            choices: ['intern', 'manager', 'engineer', 'no one']
+        }
+    ]).then((newTeam) => {
+        switch (newTeam.team){
+            case 'engineer':
+              engineerQuestions(); 
+              break
+              case 'manager':
+                managerQuestions(); 
+                break 
+                case 'intern':
+                    internQuestions(); 
+                    break 
+                    default : const holdHtmlArr = htmlTemplate.render(team);
+                    fs.writeFile('./dist/team.html', holdHtmlArr.join(""), (err)=>
+                    err? console.log(err):console.log('HTML created successfully!'))  
+        } 
+    })
+   }
 }
 
 
